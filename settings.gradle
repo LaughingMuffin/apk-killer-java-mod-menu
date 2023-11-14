@@ -14,5 +14,5 @@ dependencyResolutionManagement {
         maven { url = uri("https://dl.bintray.com/kotlin/kotlin-eap") }
     }
 }
-rootProject.name = "APKKiller"
+rootProject.name = "APK Killer Java Mod Menu"
 include ':app'

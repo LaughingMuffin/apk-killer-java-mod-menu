@@ -430,7 +430,7 @@ void patch_PackageManager(jobject obj) {
     auto classArray = g_env->NewObjectArray(1, classClass, NULL);
     g_env->SetObjectArrayElement(classArray, 0, iPackageManagerClass.getClass());
 
-    auto apkKillerClass = g_env->FindClass("com/kuro/APKKiller");
+    auto apkKillerClass = g_env->FindClass("com/muffin/APKKiller");
     auto myInvocationHandlerField = g_env->GetStaticFieldID(apkKillerClass, "myInvocationHandler", "Ljava/lang/reflect/InvocationHandler;");
     auto myInvocationHandler = g_env->GetStaticObjectField(apkKillerClass, myInvocationHandlerField);
 

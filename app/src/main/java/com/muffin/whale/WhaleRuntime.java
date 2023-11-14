@@ -1,8 +1,8 @@
-package com.kuro.whale;
+package com.muffin.whale;
 
 import android.os.Build;
 
-import com.kuro.whale.xposed.XposedBridge;
+import com.muffin.whale.xposed.XposedBridge;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;

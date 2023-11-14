@@ -1,4 +1,4 @@
-package com.kuro.app;
+package com.muffin.app;
 
 import android.app.Activity;
 import android.content.pm.InstallSourceInfo;
@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.kuro.R;
+import org.muffin.R;
 
 import java.io.FileInputStream;
 import java.security.MessageDigest;

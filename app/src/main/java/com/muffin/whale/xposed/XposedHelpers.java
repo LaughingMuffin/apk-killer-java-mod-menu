@@ -1,4 +1,4 @@
-package com.kuro.whale.xposed;
+package com.muffin.whale.xposed;
 
 import android.content.res.AssetManager;
 import android.content.res.Resources;

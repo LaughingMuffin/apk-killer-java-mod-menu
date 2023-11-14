@@ -1,4 +1,4 @@
-package com.kuro.whale.xposed.callbacks;
+package com.muffin.whale.xposed.callbacks;
 
 import android.os.Bundle;
 

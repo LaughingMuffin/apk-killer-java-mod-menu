@@ -9,7 +9,7 @@ int RegisterFunctions(JNIEnv *env) {
             {"processInvoke", "(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;", (void *) processInvoke}
     };
 
-    jclass clazz = env->FindClass("com/kuro/APKKiller");
+    jclass clazz = env->FindClass("com/muffin/APKKiller");
     if (!clazz)
         return -1;
 

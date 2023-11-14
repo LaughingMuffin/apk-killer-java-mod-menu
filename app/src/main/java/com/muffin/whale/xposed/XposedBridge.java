@@ -1,9 +1,9 @@
-package com.kuro.whale.xposed;
+package com.muffin.whale.xposed;
 
 import android.util.Log;
 
-import com.kuro.whale.WhaleRuntime;
-import com.kuro.whale.xposed.XC_MethodHook.MethodHookParam;
+import com.muffin.whale.WhaleRuntime;
+import com.muffin.whale.xposed.XC_MethodHook.MethodHookParam;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

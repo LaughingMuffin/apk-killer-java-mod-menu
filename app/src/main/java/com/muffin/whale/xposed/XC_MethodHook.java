@@ -1,8 +1,8 @@
-package com.kuro.whale.xposed;
+package com.muffin.whale.xposed;
+
+import com.muffin.whale.xposed.callbacks.XCallback;
 
 import java.lang.reflect.Member;
-
-import com.kuro.whale.xposed.callbacks.XCallback;
 
 /**
  * Callback class for method hooks.

@@ -1,4 +1,4 @@
-package com.kuro;
+package com.muffin;
 
 import android.content.Context;
 
@@ -12,6 +12,7 @@ public class APKKiller {
     }
 
     public static native void Start(Context context);
+
     public static native Object processInvoke(Method method, Object[] args);
 
     private static InvocationHandler myInvocationHandler = new InvocationHandler() {

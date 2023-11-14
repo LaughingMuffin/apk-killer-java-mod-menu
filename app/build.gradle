@@ -3,36 +3,24 @@ plugins {
 }
 
 android {
-    namespace 'com.kuro'
-    compileSdk 32
+    namespace 'org.muffin'
+    compileSdk 34
 
     defaultConfig {
-        applicationId "com.kuro"
+        applicationId "org.muffin"
+
         minSdk 21
-        //noinspection OldTargetApi
-        targetSdk 32
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
         multiDexEnabled false
-
-
-        ndk {
-            //noinspection ChromeOsAbiSupport
-            abiFilters 'x86_64', 'arm64-v8a'
-        }
     }
 
     externalNativeBuild {
         cmake {
             path "src/main/cpp/CMakeLists.txt"
             version "3.22.1"
-        }
-    }
-
-    buildTypes {
-        release {
-            //signingConfig signingConfigs.debug
         }
     }
     

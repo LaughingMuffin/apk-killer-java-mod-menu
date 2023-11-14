@@ -1,6 +1,6 @@
-package com.kuro.whale.xposed;
+package com.muffin.whale.xposed;
 
-import com.kuro.whale.xposed.callbacks.XCallback;
+import com.muffin.whale.xposed.callbacks.XCallback;
 
 /**
  * A special case of {@link XC_MethodHook} which completely replaces the original method.

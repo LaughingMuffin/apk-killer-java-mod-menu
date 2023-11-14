@@ -1,4 +1,4 @@
-package com.kuro.whale;
+package com.muffin.whale;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
