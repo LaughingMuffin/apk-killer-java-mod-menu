@@ -1,3 +1,7 @@
+//
+// Modified by Laughing Muffin on 15/11/2023
+//
+
 #include <stdio.h>
 #include <iostream>
 #include <vector>
@@ -20,11 +24,12 @@
 
 #include "ElfImg.h"
 #include "Utils.h"
-
-#define LOGI(...) __android_log_print(ANDROID_LOG_INFO, "APKKiller", __VA_ARGS__)
+//==================================================================================================
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO, "KILLER", __VA_ARGS__)
 
 #define apk_asset_path "original.apk" // assets/original.apk
 #define apk_fake_name "original.apk" // /data/data/<package_name>/cache/original.apk
+//==================================================================================================
 std::vector<std::vector<uint8_t>> apk_signatures;
 
 JavaVM *g_vm;
@@ -33,6 +38,7 @@ std::string g_pkgName;
 jstring g_apkPath;
 jobject g_proxy, g_pkgMgr;
 
+//==================================================================================================
 const char *getProcessName() {
     FILE *f = fopen("/proc/self/cmdline", "rb");
     if (f) {
@@ -44,24 +50,32 @@ const char *getProcessName() {
     return 0;
 }
 
+//==================================================================================================
 std::string getPackageName(jobject obj) {
     auto contextClass = g_env->FindClass("android/content/Context");
-    auto getPackageNameMethod = g_env->GetMethodID(contextClass, "getPackageName", "()Ljava/lang/String;");
-    return g_env->GetStringUTFChars((jstring) g_env->CallObjectMethod(obj, getPackageNameMethod), 0);
+    auto getPackageNameMethod = g_env->GetMethodID(contextClass, "getPackageName",
+                                                   "()Ljava/lang/String;");
+    return g_env->GetStringUTFChars((jstring) g_env->CallObjectMethod(obj, getPackageNameMethod),
+                                    0);
 }
 
+//==================================================================================================
 jobject getApplicationContext(jobject obj) {
     auto contextClass = g_env->FindClass("android/content/Context");
-    auto getApplicationContextMethod = g_env->GetMethodID(contextClass, "getApplicationContext", "()Landroid/content/Context;");
+    auto getApplicationContextMethod = g_env->GetMethodID(contextClass, "getApplicationContext",
+                                                          "()Landroid/content/Context;");
     return g_env->CallObjectMethod(obj, getApplicationContextMethod);
 }
 
+//==================================================================================================
 jobject getPackageManager(jobject obj) {
     auto contextClass = g_env->FindClass("android/content/Context");
-    auto getPackageManagerMethod = g_env->GetMethodID(contextClass, "getPackageManager", "()Landroid/content/pm/PackageManager;");
+    auto getPackageManagerMethod = g_env->GetMethodID(contextClass, "getPackageManager",
+                                                      "()Landroid/content/pm/PackageManager;");
     return g_env->CallObjectMethod(obj, getPackageManagerMethod);
 }
 
+//==================================================================================================
 class Reference {
 public:
     JNIEnv *env;
@@ -84,6 +98,7 @@ public:
     }
 };
 
+//==================================================================================================
 class WeakReference : public Reference {
 public:
     WeakReference(JNIEnv *env, jobject weakReference) : Reference(env, weakReference) {
@@ -94,11 +109,13 @@ public:
 
     static jobject Create(jobject obj) {
         auto weakReferenceClass = g_env->FindClass("java/lang/ref/WeakReference");
-        auto weakReferenceClassConstructor = g_env->GetMethodID(weakReferenceClass, "<init>", "(Ljava/lang/Object;)V");
+        auto weakReferenceClassConstructor = g_env->GetMethodID(weakReferenceClass, "<init>",
+                                                                "(Ljava/lang/Object;)V");
         return g_env->NewObject(weakReferenceClass, weakReferenceClassConstructor, obj);
     }
 };
 
+//==================================================================================================
 class ArrayList {
 private:
     JNIEnv *env;
@@ -126,7 +143,8 @@ public:
 
     void set(int index, jobject value) {
         auto arrayListClass = env->FindClass("java/util/ArrayList");
-        auto setMethod = env->GetMethodID(arrayListClass, "set", "(ILjava/lang/Object;)Ljava/lang/Object;");
+        auto setMethod = env->GetMethodID(arrayListClass, "set",
+                                          "(ILjava/lang/Object;)Ljava/lang/Object;");
         env->CallObjectMethod(arrayList, setMethod, index, value);
     }
 
@@ -137,6 +155,7 @@ public:
     }
 };
 
+//==================================================================================================
 class ArrayMap {
 private:
     JNIEnv *env;
@@ -164,7 +183,8 @@ public:
 
     jobject setValueAt(int index, jobject value) {
         auto arrayMapClass = env->FindClass("android/util/ArrayMap");
-        auto setValueAtMethod = env->GetMethodID(arrayMapClass, "setValueAt", "(ILjava/lang/Object;)Ljava/lang/Object;");
+        auto setValueAtMethod = env->GetMethodID(arrayMapClass, "setValueAt",
+                                                 "(ILjava/lang/Object;)Ljava/lang/Object;");
         return env->CallObjectMethod(arrayMap, setValueAtMethod, index, value);
     }
 
@@ -175,6 +195,7 @@ public:
     }
 };
 
+//==================================================================================================
 class Method {
 private:
     JNIEnv *env;
@@ -187,7 +208,8 @@ private:
 
         jclass methodClass = env->FindClass("java/lang/reflect/Method");
         getNameMethod = env->GetMethodID(methodClass, "getName", "()Ljava/lang/String;");
-        invokeMethod = env->GetMethodID(methodClass, "invoke", "(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;");
+        invokeMethod = env->GetMethodID(methodClass, "invoke",
+                                        "(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;");
 
         auto setAccessibleMethod = env->GetMethodID(methodClass, "setAccessible", "(Z)V");
         env->CallVoidMethod(method, setAccessibleMethod, true);
@@ -217,6 +239,7 @@ public:
     }
 };
 
+//==================================================================================================
 class Field {
 private:
     JNIEnv *env;
@@ -253,6 +276,7 @@ public:
     }
 };
 
+//==================================================================================================
 class Class {
 private:
     JNIEnv *env;
@@ -260,8 +284,10 @@ private:
 
     void initClass(const char *className) {
         auto classClass = env->FindClass("java/lang/Class");
-        auto forNameMethod = env->GetStaticMethodID(classClass, "forName", "(Ljava/lang/String;)Ljava/lang/Class;");
-        clazz = env->NewGlobalRef(env->CallStaticObjectMethod(classClass, forNameMethod, env->NewStringUTF(className)));
+        auto forNameMethod = env->GetStaticMethodID(classClass, "forName",
+                                                    "(Ljava/lang/String;)Ljava/lang/Class;");
+        clazz = env->NewGlobalRef(env->CallStaticObjectMethod(classClass, forNameMethod,
+                                                              env->NewStringUTF(className)));
     }
 
 public:
@@ -289,7 +315,8 @@ public:
             g_vm->AttachCurrentThread(&env, NULL);
 
             auto classClass = env->FindClass("java/lang/Class");
-            jmethodID getDeclaredFieldMethod = env->GetMethodID(classClass, "getDeclaredField", "(Ljava/lang/String;)Ljava/lang/reflect/Field;");
+            jmethodID getDeclaredFieldMethod = env->GetMethodID(classClass, "getDeclaredField",
+                                                                "(Ljava/lang/String;)Ljava/lang/reflect/Field;");
 
             auto fieldNameObj = env->NewStringUTF(fieldName);
             auto result = env->CallObjectMethod(clazz, getDeclaredFieldMethod, fieldNameObj);
@@ -312,6 +339,7 @@ public:
     }
 };
 
+//==================================================================================================
 void patch_ApplicationInfo(jobject obj) {
     if (obj) {
         LOGI("-------- Patching ApplicationInfo - %p", obj);
@@ -325,6 +353,7 @@ void patch_ApplicationInfo(jobject obj) {
     }
 }
 
+//==================================================================================================
 void patch_LoadedApk(jobject obj) {
     if (obj) {
         LOGI("-------- Patching LoadedApk - %p", obj);
@@ -341,6 +370,7 @@ void patch_LoadedApk(jobject obj) {
     }
 }
 
+//==================================================================================================
 void patch_AppBindData(jobject obj) {
     if (obj) {
         LOGI("-------- Patching AppBindData - %p", obj);
@@ -354,6 +384,7 @@ void patch_AppBindData(jobject obj) {
     }
 }
 
+//==================================================================================================
 void patch_ContextImpl(jobject obj) {
     if (obj) {
         LOGI("-------- Patching ContextImpl - %p", obj);
@@ -367,6 +398,7 @@ void patch_ContextImpl(jobject obj) {
     }
 }
 
+//==================================================================================================
 void patch_Application(jobject obj) {
     if (obj) {
         LOGI("-------- Patching Application - %p", obj);
@@ -379,8 +411,10 @@ void patch_Application(jobject obj) {
     }
 }
 
+//==================================================================================================
 AAssetManager *g_assetManager;
 
+//==================================================================================================
 void extractAsset(std::string assetName, std::string extractPath) {
     LOGI("-------- Extracting %s to %s", assetName.c_str(), extractPath.c_str());
     AAssetManager *assetManager = g_assetManager;
@@ -411,6 +445,7 @@ void extractAsset(std::string assetName, std::string extractPath) {
     close(fd);
 }
 
+//==================================================================================================
 void patch_PackageManager(jobject obj) {
     if (!obj) return;
 
@@ -424,19 +459,26 @@ void patch_PackageManager(jobject obj) {
     Class iPackageManagerClass("android.content.pm.IPackageManager");
 
     auto classClass = g_env->FindClass("java/lang/Class");
-    auto getClassLoaderMethod = g_env->GetMethodID(classClass, "getClassLoader", "()Ljava/lang/ClassLoader;");
+    auto getClassLoaderMethod = g_env->GetMethodID(classClass, "getClassLoader",
+                                                   "()Ljava/lang/ClassLoader;");
 
-    auto classLoader = g_env->CallObjectMethod(iPackageManagerClass.getClass(), getClassLoaderMethod);
+    auto classLoader = g_env->CallObjectMethod(iPackageManagerClass.getClass(),
+                                               getClassLoaderMethod);
     auto classArray = g_env->NewObjectArray(1, classClass, NULL);
     g_env->SetObjectArrayElement(classArray, 0, iPackageManagerClass.getClass());
 
     auto apkKillerClass = g_env->FindClass("com/muffin/APKKiller");
-    auto myInvocationHandlerField = g_env->GetStaticFieldID(apkKillerClass, "myInvocationHandler", "Ljava/lang/reflect/InvocationHandler;");
-    auto myInvocationHandler = g_env->GetStaticObjectField(apkKillerClass, myInvocationHandlerField);
+    auto myInvocationHandlerField = g_env->GetStaticFieldID(apkKillerClass, "myInvocationHandler",
+                                                            "Ljava/lang/reflect/InvocationHandler;");
+    auto myInvocationHandler = g_env->GetStaticObjectField(apkKillerClass,
+                                                           myInvocationHandlerField);
 
     auto proxyClass = g_env->FindClass("java/lang/reflect/Proxy");
-    auto newProxyInstanceMethod = g_env->GetStaticMethodID(proxyClass, "newProxyInstance", "(Ljava/lang/ClassLoader;[Ljava/lang/Class;Ljava/lang/reflect/InvocationHandler;)Ljava/lang/Object;");
-    g_proxy = g_env->NewGlobalRef(g_env->CallStaticObjectMethod(proxyClass, newProxyInstanceMethod, classLoader, classArray, myInvocationHandler));
+    auto newProxyInstanceMethod = g_env->GetStaticMethodID(proxyClass, "newProxyInstance",
+                                                           "(Ljava/lang/ClassLoader;[Ljava/lang/Class;Ljava/lang/reflect/InvocationHandler;)Ljava/lang/Object;");
+    g_proxy = g_env->NewGlobalRef(
+            g_env->CallStaticObjectMethod(proxyClass, newProxyInstanceMethod, classLoader,
+                                          classArray, myInvocationHandler));
 
     sPackageManagerField.set(sCurrentActivityThread, g_proxy);
 
@@ -446,11 +488,16 @@ void patch_PackageManager(jobject obj) {
     mPMField.set(pm, g_proxy);
 }
 
+//==================================================================================================
 void APKKill(JNIEnv *env, jclass clazz, jobject context) {
+    //TODO YOU EITHER DO THIS WHILE DEVELOPING OR COMMENT OUT APKKiller.Start(base); IN MainApplication.java
+    return;
     env->PushLocalFrame(64); // We call this so that we don't need to manually delete the local refs
 
     g_env = env;
-    g_assetManager = AAssetManager_fromJava(env, env->CallObjectMethod(context, env->GetMethodID(env->FindClass("android/content/Context"), "getAssets", "()Landroid/content/res/AssetManager;")));
+    g_assetManager = AAssetManager_fromJava(env, env->CallObjectMethod(context, env->GetMethodID(
+            env->FindClass("android/content/Context"), "getAssets",
+            "()Landroid/content/res/AssetManager;")));
 
     std::string apkPkg = getPackageName(context);
     g_pkgName = apkPkg;
@@ -519,6 +566,7 @@ void APKKill(JNIEnv *env, jclass clazz, jobject context) {
     env->PopLocalFrame(0);
 }
 
+//==================================================================================================
 jobject processInvoke(JNIEnv *env, jclass clazz, jobject method, jobjectArray args) {
     env->PushLocalFrame(64);
 
@@ -535,7 +583,8 @@ jobject processInvoke(JNIEnv *env, jclass clazz, jobject method, jobjectArray ar
     if (!strcmp(mName, "getPackageInfo")) {
         const jobject packageInfo = mResult;
         if (packageInfo) {
-            const char *packageName = env->GetStringUTFChars((jstring) env->GetObjectArrayElement(args, 0), 0);
+            const char *packageName = env->GetStringUTFChars(
+                    (jstring) env->GetObjectArrayElement(args, 0), 0);
             int flags = Integer_intValue(env->GetObjectArrayElement(args, 1));
             if (!strcmp(packageName, g_pkgName.c_str())) {
                 if ((flags & 0x40) != 0) {
@@ -545,7 +594,8 @@ jobject processInvoke(JNIEnv *env, jclass clazz, jobject method, jobjectArray ar
                     if (applicationInfo) {
                         Class applicationInfoClass(env, "android.content.pm.ApplicationInfo");
                         auto sourceDirField = applicationInfoClass.getField("sourceDir");
-                        auto publicSourceDirField = applicationInfoClass.getField("publicSourceDir");
+                        auto publicSourceDirField = applicationInfoClass.getField(
+                                "publicSourceDir");
 
                         sourceDirField.set(applicationInfo, g_apkPath);
                         publicSourceDirField.set(applicationInfo, g_apkPath);
@@ -555,11 +605,15 @@ jobject processInvoke(JNIEnv *env, jclass clazz, jobject method, jobjectArray ar
 
                     auto signatureClass = env->FindClass("android/content/pm/Signature");
                     auto signatureConstructor = env->GetMethodID(signatureClass, "<init>", "([B)V");
-                    auto signatureArray = env->NewObjectArray(apk_signatures.size(), signatureClass, NULL);
+                    auto signatureArray = env->NewObjectArray(apk_signatures.size(), signatureClass,
+                                                              NULL);
                     for (int i = 0; i < apk_signatures.size(); i++) {
                         auto signature = env->NewByteArray(apk_signatures[i].size());
-                        env->SetByteArrayRegion(signature, 0, apk_signatures[i].size(), (jbyte *) apk_signatures[i].data());
-                        env->SetObjectArrayElement(signatureArray, i, env->NewObject(signatureClass, signatureConstructor, signature));
+                        env->SetByteArrayRegion(signature, 0, apk_signatures[i].size(),
+                                                (jbyte *) apk_signatures[i].data());
+                        env->SetObjectArrayElement(signatureArray, i, env->NewObject(signatureClass,
+                                                                                     signatureConstructor,
+                                                                                     signature));
                     }
                     signaturesField.set(packageInfo, signatureArray);
                 } else if ((flags & 0x8000000) != 0) {
@@ -569,7 +623,8 @@ jobject processInvoke(JNIEnv *env, jclass clazz, jobject method, jobjectArray ar
                     if (applicationInfo) {
                         Class applicationInfoClass(env, "android.content.pm.ApplicationInfo");
                         auto sourceDirField = applicationInfoClass.getField("sourceDir");
-                        auto publicSourceDirField = applicationInfoClass.getField("publicSourceDir");
+                        auto publicSourceDirField = applicationInfoClass.getField(
+                                "publicSourceDir");
 
                         sourceDirField.set(applicationInfo, g_apkPath);
                         publicSourceDirField.set(applicationInfo, g_apkPath);
@@ -583,17 +638,23 @@ jobject processInvoke(JNIEnv *env, jclass clazz, jobject method, jobjectArray ar
                     auto mSigningDetailsField = signingInfoClass.getField("mSigningDetails");
                     auto mSigningDetails = mSigningDetailsField.get(signingInfo);
 
-                    Class signingDetailsClass(env, "android.content.pm.PackageParser$SigningDetails");
+                    Class signingDetailsClass(env,
+                                              "android.content.pm.PackageParser$SigningDetails");
                     auto signaturesField = signingDetailsClass.getField("signatures");
-                    auto pastSigningCertificatesField = signingDetailsClass.getField("pastSigningCertificates");
+                    auto pastSigningCertificatesField = signingDetailsClass.getField(
+                            "pastSigningCertificates");
 
                     auto signatureClass = env->FindClass("android/content/pm/Signature");
                     auto signatureConstructor = env->GetMethodID(signatureClass, "<init>", "([B)V");
-                    auto signatureArray = env->NewObjectArray(apk_signatures.size(), signatureClass, NULL);
+                    auto signatureArray = env->NewObjectArray(apk_signatures.size(), signatureClass,
+                                                              NULL);
                     for (int i = 0; i < apk_signatures.size(); i++) {
                         auto signature = env->NewByteArray(apk_signatures[i].size());
-                        env->SetByteArrayRegion(signature, 0, apk_signatures[i].size(), (jbyte *) apk_signatures[i].data());
-                        env->SetObjectArrayElement(signatureArray, i, env->NewObject(signatureClass, signatureConstructor, signature));
+                        env->SetByteArrayRegion(signature, 0, apk_signatures[i].size(),
+                                                (jbyte *) apk_signatures[i].data());
+                        env->SetObjectArrayElement(signatureArray, i, env->NewObject(signatureClass,
+                                                                                     signatureConstructor,
+                                                                                     signature));
                     }
                     signaturesField.set(mSigningDetails, signatureArray);
                     pastSigningCertificatesField.set(mSigningDetails, signatureArray);
@@ -604,7 +665,8 @@ jobject processInvoke(JNIEnv *env, jclass clazz, jobject method, jobjectArray ar
                     if (applicationInfo) {
                         Class applicationInfoClass(env, "android.content.pm.ApplicationInfo");
                         auto sourceDirField = applicationInfoClass.getField("sourceDir");
-                        auto publicSourceDirField = applicationInfoClass.getField("publicSourceDir");
+                        auto publicSourceDirField = applicationInfoClass.getField(
+                                "publicSourceDir");
 
                         sourceDirField.set(applicationInfo, g_apkPath);
                         publicSourceDirField.set(applicationInfo, g_apkPath);
@@ -614,7 +676,8 @@ jobject processInvoke(JNIEnv *env, jclass clazz, jobject method, jobjectArray ar
             }
         }
     } else if (!strcmp(mName, "getApplicationInfo")) {
-        const char *packageName = env->GetStringUTFChars((jstring) env->GetObjectArrayElement(args, 0), 0);
+        const char *packageName = env->GetStringUTFChars(
+                (jstring) env->GetObjectArrayElement(args, 0), 0);
         if (!strcmp(packageName, g_pkgName.c_str())) {
             auto applicationInfo = mResult;
             if (applicationInfo) {
@@ -628,7 +691,8 @@ jobject processInvoke(JNIEnv *env, jclass clazz, jobject method, jobjectArray ar
             }
         }
     } else if (!strcmp(mName, "getInstallerPackageName")) {
-        const char *packageName = env->GetStringUTFChars((jstring) env->GetObjectArrayElement(args, 0), 0);
+        const char *packageName = env->GetStringUTFChars(
+                (jstring) env->GetObjectArrayElement(args, 0), 0);
         if (!strcmp(packageName, g_pkgName.c_str())) {
             mResult = env->NewStringUTF("com.android.vending");
         }
@@ -637,5 +701,7 @@ jobject processInvoke(JNIEnv *env, jclass clazz, jobject method, jobjectArray ar
     if (mResult) {
         mResult = env->NewGlobalRef(mResult);
     }
-    return env->PopLocalFrame(mResult); // make sure all local refs are deleted except for the result
+    return env->PopLocalFrame(
+            mResult); // make sure all local refs are deleted except for the result
 }
+//==================================================================================================

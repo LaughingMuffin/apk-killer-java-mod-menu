@@ -14,11 +14,6 @@ import java.lang.reflect.Method;
  * NOTICE: Do not move or rename any methods in this class.
  */
 public class WhaleRuntime {
-
-    static {
-//        System.loadLibrary("whale");
-    }
-
     private static String getShorty(Member member) {
         return VMHelper.getShorty(member);
     }

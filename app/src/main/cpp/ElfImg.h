@@ -1,3 +1,7 @@
+//
+// Modified by Laughing Muffin on 15/11/2023
+//
+
 #ifndef ELF_IMG_H
 #define ELF_IMG_H
 
@@ -7,9 +11,10 @@
 #include <sys/types.h>
 #include <link.h>
 #include <string>
-
+//==================================================================================================
 #define SHT_GNU_HASH 0x6ffffff6
 
+//==================================================================================================
 class ElfImg {
 public:
     ElfImg(std::string_view elf);
@@ -92,6 +97,7 @@ private:
     mutable std::unordered_map<std::string_view, ElfW(Sym) *> symtabs_;
 };
 
+//==================================================================================================
 constexpr uint32_t ElfImg::ElfHash(std::string_view name) {
     uint32_t h = 0, g = 0;
     for (unsigned char p: name) {
@@ -103,6 +109,7 @@ constexpr uint32_t ElfImg::ElfHash(std::string_view name) {
     return h;
 }
 
+//==================================================================================================
 constexpr uint32_t ElfImg::GnuHash(std::string_view name) {
     uint32_t h = 5381;
     for (unsigned char p: name) {
@@ -110,5 +117,6 @@ constexpr uint32_t ElfImg::GnuHash(std::string_view name) {
     }
     return h;
 }
-
+//==================================================================================================
 #endif
+//==================================================================================================

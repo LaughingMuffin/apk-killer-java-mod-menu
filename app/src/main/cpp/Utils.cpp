@@ -1,5 +1,10 @@
+//
+// Modified by Laughing Muffin on 15/11/2023
+//
+
 #include "Utils.h"
 
+//==================================================================================================
 std::vector<uint8_t> base64_decode(const std::string &in) {
     std::string chars =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -13,10 +18,12 @@ std::vector<uint8_t> base64_decode(const std::string &in) {
     uint8_t char_array_4[4], char_array_3[3];
     std::vector<uint8_t> ret;
 
-    while (in_len-- && ( in[in_] != '=') && (isalnum(in[in_]) || (in[in_] == '+') || (in[in_] == '/'))) {
-        char_array_4[i++] = in[in_]; in_++;
-        if (i ==4) {
-            for (i = 0; i <4; i++)
+    while (in_len-- && (in[in_] != '=') &&
+           (isalnum(in[in_]) || (in[in_] == '+') || (in[in_] == '/'))) {
+        char_array_4[i++] = in[in_];
+        in_++;
+        if (i == 4) {
+            for (i = 0; i < 4; i++)
                 char_array_4[i] = chars.find(char_array_4[i]);
 
             char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
@@ -30,10 +37,10 @@ std::vector<uint8_t> base64_decode(const std::string &in) {
     }
 
     if (i) {
-        for (j = i; j <4; j++)
+        for (j = i; j < 4; j++)
             char_array_4[j] = 0;
 
-        for (j = 0; j <4; j++)
+        for (j = 0; j < 4; j++)
             char_array_4[j] = chars.find(char_array_4[j]);
 
         char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
@@ -45,3 +52,4 @@ std::vector<uint8_t> base64_decode(const std::string &in) {
 
     return ret;
 }
+//==================================================================================================

@@ -1,3 +1,7 @@
+//
+// Modified by Laughing Muffin on 15/11/2023
+//
+
 #include <malloc.h>
 #include <cstring>
 #include <sys/mman.h>
@@ -9,19 +13,20 @@
 #include "ElfImg.h"
 
 #include <android/log.h>
-
-#define LOG_TAG "Chitoge-ElfImg"
+//==================================================================================================
+#define LOG_TAG "ELF-IMG"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
-#define LOGW(...) __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
+//==================================================================================================
 template<typename T>
 inline constexpr auto offsetOf(ElfW(Ehdr) *head, ElfW(Off) off) {
     return reinterpret_cast<std::conditional_t<std::is_pointer_v<T>, T, T *>>(
             reinterpret_cast<uintptr_t>(head) + off);
 }
 
+//==================================================================================================
 ElfImg::ElfImg(std::string_view base_name) : elf(base_name) {
     if (!findModuleBase()) {
         base = nullptr;
@@ -112,7 +117,7 @@ ElfImg::ElfImg(std::string_view base_name) : elf(base_name) {
         }
     }
 }
-
+//==================================================================================================
 ElfW(Addr) ElfImg::ElfLookup(std::string_view name, uint32_t hash) const {
     if (nbucket_ == 0) return 0;
 
@@ -126,7 +131,7 @@ ElfW(Addr) ElfImg::ElfLookup(std::string_view name, uint32_t hash) const {
     }
     return 0;
 }
-
+//==================================================================================================
 ElfW(Addr) ElfImg::GnuLookup(std::string_view name, uint32_t hash) const {
     static constexpr auto bloom_mask_bits = sizeof(ElfW(Addr)) * 8;
 
@@ -151,7 +156,7 @@ ElfW(Addr) ElfImg::GnuLookup(std::string_view name, uint32_t hash) const {
     }
     return 0;
 }
-
+//==================================================================================================
 ElfW(Addr) ElfImg::LinearLookup(std::string_view name) const {
     if (symtabs_.empty()) {
         symtabs_.reserve(symtab_count);
@@ -173,7 +178,7 @@ ElfW(Addr) ElfImg::LinearLookup(std::string_view name) const {
     }
 }
 
-
+//==================================================================================================
 ElfImg::~ElfImg() {
     if (buffer) {
         free(buffer);
@@ -184,8 +189,9 @@ ElfImg::~ElfImg() {
         munmap(header, size);
     }
 }
-
-ElfW(Addr) ElfImg::getSymbolOffset(std::string_view name, uint32_t gnu_hash, uint32_t elf_hash) const {
+//==================================================================================================
+ElfW(Addr)
+ElfImg::getSymbolOffset(std::string_view name, uint32_t gnu_hash, uint32_t elf_hash) const {
     if (auto offset = GnuLookup(name, gnu_hash); offset > 0) {
         LOGD("found %s %p in %s in dynsym by gnuhash", name.data(),
              reinterpret_cast<void *>(offset), elf.data());
@@ -205,6 +211,7 @@ ElfW(Addr) ElfImg::getSymbolOffset(std::string_view name, uint32_t gnu_hash, uin
 
 }
 
+//==================================================================================================
 bool ElfImg::findModuleBase() {
     char buff[256];
     off_t load_addr;
@@ -216,7 +223,8 @@ bool ElfImg::findModuleBase() {
         if ((strstr(buff, "r-xp") || strstr(buff, "r--p")) && strstr(buff, elf.data())) {
             LOGD("found: %s", buff);
             std::string_view b = buff;
-            if (auto begin = b.find_last_of(' '); begin != std::string_view::npos && b[++begin] == '/') {
+            if (auto begin = b.find_last_of(' '); begin != std::string_view::npos &&
+                                                  b[++begin] == '/') {
                 found = true;
                 elf = b.substr(begin);
                 if (elf.back() == '\n') elf.pop_back();
@@ -243,3 +251,4 @@ bool ElfImg::findModuleBase() {
     base = reinterpret_cast<void *>(load_addr);
     return true;
 }
+//==================================================================================================

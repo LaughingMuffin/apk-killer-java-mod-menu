@@ -1,12 +1,14 @@
 cmake_minimum_required(VERSION 3.8)
 
+project("muffin")
+
 add_subdirectory(whale)
 
 set(CMAKE_CXX_STANDARD 17)
 
 set(LINKER_FLAGS "-ffixed-x18 -Wl,--hash-style=both")
-set(C_FLAGS "-Werror=format -fdata-sections -ffunction-sections -std=c18")
-set(CXX_FLAGS "${CXX_FLAGS} -std=c++20")
+set(C_FLAGS "-Werror=format -fdata-sections -ffunction-sections -std=c2x -Wno-error=format-security -w -fno-rtti -fpermissive")
+set(CXX_FLAGS "${CXX_FLAGS} -Wno-error=format-security -ffunction-sections -fdata-sections -w -Werror -s -std=c++20 -Wno-error=c++20-narrowing -fms-extensions -fno-rtti -fpermissive")
 
 if (NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(C_FLAGS "${C_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
@@ -21,9 +23,9 @@ set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${LINKER_FLAGS}")
 
 include_directories(whale/include)
 
-add_library(killer SHARED
-        main.cpp
+add_library(muffin SHARED
+        Muffin.cpp
         Utils.cpp
         ElfImg.cpp)
 
-target_link_libraries(killer whale android log)
+target_link_libraries(muffin whale android log)

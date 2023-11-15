@@ -1,3 +1,7 @@
+/*
+ * Edited by Laughing Muffin
+ */
+
 package com.muffin;
 
 import android.content.Context;
@@ -7,8 +11,9 @@ import java.lang.reflect.Method;
 
 @SuppressWarnings("all")
 public class APKKiller {
+
     static {
-        System.loadLibrary("killer");
+        System.loadLibrary("muffin");
     }
 
     public static native void Start(Context context);
