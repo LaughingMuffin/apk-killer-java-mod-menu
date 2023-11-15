@@ -2,4 +2,5 @@
 /.gradle/
 /local.properties
 /app/build/
+/app/release/
 /app/.cxx/

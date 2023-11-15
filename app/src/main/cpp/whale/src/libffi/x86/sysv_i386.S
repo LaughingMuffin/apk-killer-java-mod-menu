@@ -822,7 +822,7 @@ ENDF(C(__x86.get_pc_thunk.dx))
 #endif /* __PIC__ */
 
 /* Sadly, OSX cctools-as doesn't understand .cfi directives at all.  */
-
+/*
 #ifdef __APPLE__
 .section __TEXT,__eh_frame,coalesced,no_toc+strip_static_syms+live_support
 EHFrame0:
@@ -833,6 +833,7 @@ EHFrame0:
 #else
 .section .eh_frame,EH_FRAME_FLAGS,@progbits
 #endif
+*/
 
 #ifdef HAVE_AS_X86_PCREL
 # define PCREL(X)	X - .
