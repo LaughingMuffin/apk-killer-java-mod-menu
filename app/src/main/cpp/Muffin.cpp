@@ -309,10 +309,12 @@ JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
 
     JNIEnv *env;
     if (vm->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_6) != JNI_OK) {
+        LOGI("Error retrieving env!");
         return -1;
     }
 
     if (RegisterFunctions(env) != 0) {
+        LOGI("Error registering navives!");
         return -1;
     }
 
