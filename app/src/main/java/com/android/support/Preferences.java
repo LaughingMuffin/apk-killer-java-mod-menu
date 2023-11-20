@@ -13,7 +13,6 @@ public class Preferences {
     private static Preferences prefsInstance;
     public static Context context;
     public static boolean loadPref, isExpanded;
-
     private static final String LENGTH = "_length";
     private static final String DEFAULT_STRING_VALUE = "";
     private static final int DEFAULT_INT_VALUE = 0; //-1

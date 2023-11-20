@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.8)
 
 project("muffin")
 
-add_subdirectory(whale)
+add_subdirectory(thirdParty/whale)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -21,11 +21,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${C_FLAGS} ${CXX_FLAGS} -O0")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${LINKER_FLAGS}")
 set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${LINKER_FLAGS}")
 
-include_directories(whale/include)
+include_directories(thirdParty/whale/include)
 
 add_library(muffin SHARED
         Muffin.cpp
-        Utils.cpp
-        ElfImg.cpp)
+        thirdParty/elf/ElfImg.cpp)
 
 target_link_libraries(muffin whale android log)

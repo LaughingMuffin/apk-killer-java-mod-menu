@@ -1,15 +1,13 @@
 package com.muffin.app;
 
+import static com.android.support.Launcher.startWithoutPermission;
+
 import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.InstallSourceInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.android.support.Main;
 
 import org.muffin.R;
 
@@ -17,10 +15,6 @@ import java.io.FileInputStream;
 import java.security.MessageDigest;
 
 public class MainActivity extends Activity {
-
-    //Only if you have changed MainActivity to yours and you wanna call game's activity.
-    public String GameActivity = "com.unity3d.player.UnityPlayerActivity";
-    public boolean hasLaunched = false;
     TextView signature1, signature2;
     TextView apkPath1, apkPath2, apkPath3, apkPath4;
     TextView apkcrc;
@@ -91,8 +85,7 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
 
-//        Main.StartWithoutPermission(this);
-        Main.Start(this);
+        startWithoutPermission(this);
     }
 
     public String md5(byte[] data) {

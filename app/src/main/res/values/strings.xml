@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">APK KMM</string>
+    <string name="hide_kill_hold">HIDE/KILL (Hold)</string>
+    <string name="minimize">MINIMIZE</string>
 </resources>
