@@ -222,8 +222,154 @@ void Init(JNIEnv *env, jobject thiz, jobject ctx, jobject title, jobject subtitl
     //setDialog(ctx,env,OBFUSCATE("Title"),OBFUSCATE("Message Example"));
 
     //Toast Example
-    Toast(env, ctx, OBFUSCATE("Modded by YOU"), ToastLength::LENGTH_LONG);
+    Toast(env, ctx, OBFUSCATE("Modded by Laughing Muffin"), ToastLength::LENGTH_LONG);
 
     initValid = true;
+}
+
+//==================================================================================================
+void setSocialsTitle(JNIEnv *env, jobject thiz, jobject text_view) {
+    setText(env, text_view, OBFUSCATE("<b>Socials</b>"));
+}
+
+//==================================================================================================
+void setInfoTitle(JNIEnv *env, jobject thiz, jobject text_view) {
+    setText(env, text_view, OBFUSCATE("<b>Info</b>"));
+}
+
+//==================================================================================================
+void setCreditTitle(JNIEnv *env, jobject thiz, jobject text_view) {
+    setText(env, text_view, OBFUSCATE("<b>Credits</b>"));
+}
+
+//==================================================================================================
+jobjectArray subMenuSocials(JNIEnv *env, jobject thiz) {
+    jobjectArray ret;
+
+    const char *features[] = {
+            OBFUSCATE("Category_Socials"), //Not counted
+            OBFUSCATE("RichWebView_<html>"
+                      "<head>"
+                      ""
+                      "</head>"
+                      "<body style=\"color:white;\">"
+                      "<p style=\"text-align:center\">"
+                      "Click on the buttons below!"
+                      "</p>"
+                      "</body>"
+                      "</html>"),
+            OBFUSCATE("ButtonLink_Join us on Telegram_https://t.me/androidrepublicnews"),
+            OBFUSCATE(
+                    "ButtonLink_Visit our YouTube Channel_https://www.youtube.com/channel/UC8t_SXcc8L277GvTaVVzAew"),
+            OBFUSCATE("ButtonLink_Visit the website_https://github.com/LaughingMuffin"),
+            OBFUSCATE("ButtonLink_Check out X_https://twitter.com/lng_muffin"),
+            OBFUSCATE("RichWebView_<html>"
+                      "<head>"
+                      ""
+                      "</head>"
+                      "<body style=\"color:white;\">"
+                      "<footer>"
+                      "<p style=\"text-align:center\">"
+                      "https://github.com/LaughingMuffin"
+                      "</p>"
+                      "</footer>"
+                      "</body>"
+                      "</html>")
+    };
+
+    int Total_Feature = (sizeof features / sizeof features[0]);
+    ret = (jobjectArray)
+            env->NewObjectArray(Total_Feature, env->FindClass(OBFUSCATE("java/lang/String")),
+                                env->NewStringUTF(""));
+    int i;
+    for (i = 0; i < Total_Feature; i++)
+        env->SetObjectArrayElement(ret, i, env->NewStringUTF(features[i]));
+
+    return (ret);
+}
+
+//==================================================================================================
+jobjectArray subMenuInfo(JNIEnv *env, jobject thiz) {
+    jobjectArray ret;
+
+    const char *features[] = {
+            OBFUSCATE("Category_Info"), //Not counted
+            OBFUSCATE("RichWebView_<html>"
+                      "<head>"
+                      ""
+                      "</head>"
+                      "<body style=\"color:white;\">"
+                      "<p>"
+                      "- Main view provides all the mod features, you can access back the main view by tapping on the top left ♻ icon."
+                      "</p>"
+                      "<p>"
+                      "- Socials tab will list the socials where you can find me or my team."
+                      "</p>"
+                      "<p>"
+                      "- Info tab provides general info regarding this mod menu."
+                      "</p>"
+                      "<p>"
+                      "- Credits tab give more info regarding the provenience of this mod."
+                      "</p>"
+                      "<p>"
+                      "- You can access settings by tapping the ⚙ icon in top right, it provides a few helpful things"
+                      "</p>"
+                      "<footer>"
+                      "<p style=\"text-align:center\">"
+                      "https://github.com/LaughingMuffin"
+                      "</p>"
+                      "</footer>"
+                      "</body>"
+                      "</html>")
+    };
+
+    int Total_Feature = (sizeof features / sizeof features[0]);
+    ret = (jobjectArray)
+            env->NewObjectArray(Total_Feature, env->FindClass(OBFUSCATE("java/lang/String")),
+                                env->NewStringUTF(""));
+    int i;
+    for (i = 0; i < Total_Feature; i++)
+        env->SetObjectArrayElement(ret, i, env->NewStringUTF(features[i]));
+
+    return (ret);
+}
+
+//==================================================================================================
+jobjectArray subMenuCredits(JNIEnv *env, jobject thiz) {
+    jobjectArray ret;
+
+    const char *features[] = {
+            OBFUSCATE("Category_Credits"), //Not counted
+            OBFUSCATE("RichWebView_<html>"
+                      "<head>"
+                      ""
+                      "</head>"
+                      "<body style=\"color:white;\">"
+                      "<p style=\"text-align:center\">"
+                      "This mod has been made and released by <b>Laughing Muffin</b> at https://github.com/LaughingMuffin. </p>"
+                      "<p style=\"text-align:center\">"
+                      "The mod is 100% FREE so if you did pay to have access to it you got 100% scammed! </p>"
+                      "<p style=\"text-align:center\">"
+                      "If you want to share this mod on other websites please provide proper credits. </p>"
+                      "<p style=\"text-align:right\">Thank you!</p>"
+                      "<p style=\"text-align:right\">by Laughing Muffin</p>"
+                      "<footer>"
+                      "<p style=\"text-align:center\">"
+                      "https://github.com/LaughingMuffin"
+                      "</p>"
+                      "</footer>"
+                      "</body>"
+                      "</html>")
+    };
+
+    int Total_Feature = (sizeof features / sizeof features[0]);
+    ret = (jobjectArray)
+            env->NewObjectArray(Total_Feature, env->FindClass(OBFUSCATE("java/lang/String")),
+                                env->NewStringUTF(""));
+    int i;
+    for (i = 0; i < Total_Feature; i++)
+        env->SetObjectArrayElement(ret, i, env->NewStringUTF(features[i]));
+
+    return (ret);
 }
 //==================================================================================================

@@ -100,7 +100,7 @@ public class Menu {
     //********************************************************************//
 
     RelativeLayout mCollapsed, mRootContainer;
-    LinearLayout mExpanded, mods, mSettings, mCollapse;
+    LinearLayout mExpanded, mods, mSettings, mCollapse, mTab1, mTab2, mTab3, mArrowBack;
     LinearLayout.LayoutParams scrollExpanded, scroll;
     WindowManager mWindowManager;
     WindowManager.LayoutParams vmParams;
@@ -111,17 +111,29 @@ public class Menu {
     Context getContext;
 
     //initialize methods from the native library
-    native void Init(Context context, TextView title, TextView subTitle);
+    public static native void Init(Context context, TextView title, TextView subTitle);
 
-    native String Icon();
+    public static native String Icon();
 
-    native String IconWebViewData();
+    public static native String IconWebViewData();
 
-    native String[] GetFeatureList();
+    public static native String[] GetFeatureList();
 
-    native String[] SettingsList();
+    public static native String[] SettingsList();
 
-    native boolean IsGameLibLoaded();
+    public static native boolean IsGameLibLoaded();
+
+    public static native void setSocialsTitle(TextView textView);
+
+    public static native void setInfoTitle(TextView textView);
+
+    public static native void setCreditTitle(TextView textView);
+
+    public static native String[] subMenuSocials();
+
+    public static native String[] subMenuInfo();
+
+    public static native String[] subMenuCredits();
 
     //Here we write the code for our Menu
     // Reference: https://www.androidhive.info/2016/11/android-floating-widget-like-facebook-chat-head/
@@ -170,7 +182,7 @@ public class Menu {
         //********** The icon in Webview to open mod menu **********
         WebView wView = new WebView(context); //Icon size width=\"50\" height=\"50\"
         wView.setLayoutParams(new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
-        int applyDimension2 = (int) TypedValue.applyDimension(1, ICON_SIZE, context.getResources().getDisplayMetrics()); //Icon size
+        int applyDimension2 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, ICON_SIZE, context.getResources().getDisplayMetrics()); //Icon size
         wView.getLayoutParams().height = applyDimension2;
         wView.getLayoutParams().width = applyDimension2;
         wView.loadData("<html>" +
@@ -201,12 +213,9 @@ public class Menu {
                 try {
                     settingsOpen = !settingsOpen;
                     if (settingsOpen) {
-                        scrollView.removeView(mods);
+                        scrollView.removeAllViews();
                         scrollView.addView(mSettings);
                         scrollView.scrollTo(0, 0);
-                    } else {
-                        scrollView.removeView(mSettings);
-                        scrollView.addView(mods);
                     }
                 } catch (IllegalStateException ignored) {
                     Log.e(TAG, "onClick: WTF ");
@@ -242,6 +251,135 @@ public class Menu {
         subTitle.setTextSize(10.0f);
         subTitle.setGravity(Gravity.CENTER);
         subTitle.setPadding(0, 0, 0, 5);
+
+        //********** Arrow Back icon **********
+        TextView arrowBack = new TextView(context);
+        arrowBack.setText("♻");
+        arrowBack.setTextColor(TEXT_COLOR);
+        arrowBack.setTypeface(Typeface.DEFAULT_BOLD);
+        arrowBack.setTextSize(20.0f);
+        RelativeLayout.LayoutParams rlsettingsaaa = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+        rlsettingsaaa.addRule(ALIGN_PARENT_LEFT);
+        arrowBack.setLayoutParams(rlsettingsaaa);
+        arrowBack.setOnClickListener(new View.OnClickListener() {
+            boolean isOpen;
+
+            @Override
+            public void onClick(View v) {
+                try {
+                    isOpen = !isOpen;
+                    if (isOpen) {
+                        scrollView.removeAllViews();
+                        scrollView.addView(mods);
+                        scrollView.scrollTo(0, 0);
+                    }
+                } catch (IllegalStateException e) {
+                    Log.e(TAG, "onClick: Error while clicking back btn");
+                }
+            }
+        });
+
+        mArrowBack = new LinearLayout(context);
+        mArrowBack.setOrientation(LinearLayout.VERTICAL);
+        featureList(GetFeatureList(), mArrowBack);
+
+        //New Multi Tab Title
+        RelativeLayout titleText2 = new RelativeLayout(context);
+        titleText2.setPadding(10, 5, 10, 5);
+        titleText2.setVerticalGravity(16);
+
+        //********** TAB 1 **********
+        TextView subMenuList = new TextView(context);
+        subMenuList.setTextColor(TEXT_COLOR);
+        subMenuList.setTextSize(18.0f);
+        //subMenuList.setGravity(Gravity.LEFT);
+        RelativeLayout.LayoutParams rla = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+        rla.addRule(ALIGN_PARENT_RIGHT);
+        subMenuList.setLayoutParams(rla);
+        setInfoTitle(subMenuList);
+        subMenuList.setOnClickListener(new View.OnClickListener() {
+            boolean isOpen;
+
+            @Override
+            public void onClick(View v) {
+                try {
+                    isOpen = !isOpen;
+                    if (isOpen) {
+                        scrollView.removeAllViews();
+                        scrollView.addView(mTab1);
+                        scrollView.scrollTo(0, 0);
+                    }
+                } catch (IllegalStateException e) {
+                    Log.e(TAG, "onClick: Error while opening info tab");
+                }
+            }
+        });
+
+        mTab1 = new LinearLayout(context);
+        mTab1.setOrientation(LinearLayout.VERTICAL);
+        featureList(subMenuInfo(), mTab1);
+
+        //********** TAB 2 **********
+        TextView subMenuList2 = new TextView(context);
+        subMenuList2.setTextColor(TEXT_COLOR);
+        subMenuList2.setTextSize(18.0f);
+        //subMenuList2.setGravity(Gravity.CENTER);
+        RelativeLayout.LayoutParams rlaa = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+        rlaa.addRule(RelativeLayout.CENTER_IN_PARENT);
+        subMenuList2.setLayoutParams(rlaa);
+        setCreditTitle(subMenuList2);
+        subMenuList2.setOnClickListener(new View.OnClickListener() {
+            boolean isOpen;
+
+            @Override
+            public void onClick(View v) {
+                try {
+                    isOpen = !isOpen;
+                    if (isOpen) {
+                        scrollView.removeAllViews();
+                        scrollView.addView(mTab2);
+                        scrollView.scrollTo(0, 0);
+                    }
+                } catch (IllegalStateException e) {
+                    Log.e(TAG, "onClick: Error while opening credit tab");
+                }
+            }
+        });
+
+        mTab2 = new LinearLayout(context);
+        mTab2.setOrientation(LinearLayout.VERTICAL);
+        featureList(subMenuCredits(), mTab2);
+
+        //********** TAB 3 **********
+        TextView subMenuList3 = new TextView(context);
+        subMenuList3.setTextColor(TEXT_COLOR);
+        subMenuList3.setTextSize(18.0f);
+        //subMenuList3.setGravity(Gravity.RIGHT);
+        RelativeLayout.LayoutParams rlaaa = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+        rlaaa.addRule(ALIGN_PARENT_LEFT);
+        subMenuList3.setLayoutParams(rlaaa);
+        setSocialsTitle(subMenuList3);
+        subMenuList3.setOnClickListener(new View.OnClickListener() {
+            boolean isOpen;
+
+            @Override
+            public void onClick(View v) {
+                try {
+                    isOpen = !isOpen;
+                    if (isOpen) {
+                        scrollView.removeAllViews();
+                        scrollView.addView(mTab3);
+                        scrollView.scrollTo(0, 0);
+                    }
+                } catch (IllegalStateException e) {
+                    Log.e(TAG, "onClick: Error while opening socials tab");
+                }
+            }
+        });
+
+        mTab3 = new LinearLayout(context);
+        mTab3.setOrientation(LinearLayout.VERTICAL);
+        featureList(subMenuSocials(), mTab3);
 
         //********** Mod menu feature list **********
         scrollView = new ScrollView(context);
@@ -306,8 +444,17 @@ public class Menu {
         }
         titleText.addView(title);
         titleText.addView(settings);
+
+        //**** NEW
+        titleText.addView(arrowBack);
+        titleText2.addView(subMenuList);
+        titleText2.addView(subMenuList2);
+        titleText2.addView(subMenuList3);
+
+        //**** END NEW
         mExpanded.addView(titleText);
         mExpanded.addView(subTitle);
+        mExpanded.addView(titleText2);
         scrollView.addView(mods);
         mExpanded.addView(scrollView);
         relativeLayout.addView(hideBtn);

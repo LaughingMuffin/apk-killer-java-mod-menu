@@ -106,6 +106,18 @@ int RegisterFunctions(JNIEnv *env) {
                                                    "()[Ljava/lang/String;"),                                                          (void *) SettingsList},
             {OBFUSCATE("GetFeatureList"),  OBFUSCATE(
                                                    "()[Ljava/lang/String;"),                                                          (void *) GetFeatureList},
+            {OBFUSCATE("subMenuSocials"),  OBFUSCATE(
+                                                   "()[Ljava/lang/String;"),                                                          (void *) subMenuSocials},
+            {OBFUSCATE("subMenuInfo"),     OBFUSCATE(
+                                                   "()[Ljava/lang/String;"),                                                          (void *) subMenuInfo},
+            {OBFUSCATE("subMenuCredits"),  OBFUSCATE(
+                                                   "()[Ljava/lang/String;"),                                                          (void *) subMenuCredits},
+            {OBFUSCATE("setSocialsTitle"), OBFUSCATE(
+                                                   "(Landroid/widget/TextView;)V"),                                                   (void *) setSocialsTitle},
+            {OBFUSCATE("setInfoTitle"),    OBFUSCATE(
+                                                   "(Landroid/widget/TextView;)V"),                                                   (void *) setInfoTitle},
+            {OBFUSCATE("setCreditTitle"),  OBFUSCATE(
+                                                   "(Landroid/widget/TextView;)V"),                                                   (void *) setCreditTitle},
     };
 
     jclass clazzMenu = env->FindClass(OBFUSCATE("com/android/support/Menu"));
