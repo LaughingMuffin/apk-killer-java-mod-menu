@@ -9,7 +9,7 @@
 - [x] Apk Killer
 - [x] Multi tabs in menu header 
 - [x] Java & C++ Obfuscator
-- [ ] Hooking Frameworks
+- [x] Hooking Frameworks
 - [ ] Memory Patch Tool
 
 ## How to add to any app

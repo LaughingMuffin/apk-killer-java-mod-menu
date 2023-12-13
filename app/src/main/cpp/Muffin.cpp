@@ -23,10 +23,44 @@
 
 //==================================================================================================
 #include "thirdParty/APKKiller.h"
+#include "thirdParty/xdl/includes/xdl.h"
+#include "thirdParty/dobby/include/dobby.h"
+
+//==================================================================================================
+#define HOOK_DEF(ret, func, ...) \
+  ret (*orig_##func)(__VA_ARGS__); \
+  ret hook_##func(__VA_ARGS__)
+//==================================================================================================
+#define MUFF(target, ptr, orig) DobbyHook((void *)target,(void *)ptr,(void **)&orig)
+//==================================================================================================
+HOOK_DEF(void, Input, void *thiz, void *ex_ab, void *ex_ac) {
+    orig_Input(thiz, ex_ab, ex_ac);
+    Debug_Log("Tip Tap");
+    return;
+}
 
 //==================================================================================================
 void *hack_thread(void *) {
     Debug_Log(OBFUSCATE("pthread created"));
+
+    Debug_Log("| 1 | dl_open libinput");
+    void *g_Input = xdl_open(OBFUSCATE("libinput.so"), 0);
+    if (g_Input) {
+        Debug_Log("| 1 | pointer is 0x%08x", g_Input);
+        Debug_Log(
+                "| 1 | dl_sym _ZN7android13InputConsumer21initializeMotionEventEPNS_11MotionEventEPKNS_12InputMessageE");
+        void *inputSymbolPointer = (void *) xdl_sym(g_Input, OBFUSCATE(
+                "_ZN7android13InputConsumer21initializeMotionEventEPNS_11MotionEventEPKNS_12InputMessageE"),
+                                                    nullptr);
+        if (inputSymbolPointer) {
+            Debug_Log("| 1 | pointer is 0x%08x", inputSymbolPointer);
+            Debug_Log(
+                    "| 1 | hook _ZN7android13InputConsumer21initializeMotionEventEPNS_11MotionEventEPKNS_12InputMessageE");
+            MUFF(inputSymbolPointer, hook_Input, orig_Input);
+        }
+    }
+    Debug_Log("| 1 | dl_close libinput");
+    xdl_close(g_Input);
 
     //Check if target lib is loaded
 //    do {

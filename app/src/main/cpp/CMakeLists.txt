@@ -21,10 +21,25 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${C_FLAGS} ${CXX_FLAGS} -O0")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${LINKER_FLAGS}")
 set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${LINKER_FLAGS}")
 
-include_directories(thirdParty/whale/include)
+include_directories(
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/whale/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/xdl
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/xdl/includes
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/dobby
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/dobby/include
+)
 
-add_library(muffin SHARED
+add_library(
+        muffin SHARED
         Muffin.cpp
-        thirdParty/elf/ElfImg.cpp)
+        thirdParty/elf/ElfImg.cpp
+        thirdParty/xdl/xdl.c
+        thirdParty/xdl/xdl_iterate.c
+        thirdParty/xdl/xdl_linker.c
+        thirdParty/xdl/xdl_lzma.c
+        thirdParty/xdl/xdl_util.c
+)
 
-target_link_libraries(muffin whale android log)
+set(DOBBY_LIB ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/dobby/${CMAKE_ANDROID_ARCH_ABI}/libdobby.a)
+
+target_link_libraries(muffin whale android log ${DOBBY_LIB})
