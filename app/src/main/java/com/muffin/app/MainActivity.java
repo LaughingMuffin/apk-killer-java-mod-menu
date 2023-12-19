@@ -12,6 +12,7 @@ import android.widget.Toast;
 import org.muffin.R;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.security.MessageDigest;
 
 public class MainActivity extends Activity {
@@ -85,7 +86,11 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
 
-        startWithoutPermission(this);
+        try {
+            startWithoutPermission(this);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String md5(byte[] data) {
